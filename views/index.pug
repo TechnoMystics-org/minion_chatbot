@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    title Chat Application
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+   
+  body
+    header
+      h1 Chat Application
+    main#chat
+      div#messages
+        //- Display messages here
+      form#message-form
+        input(type='text', name='message', placeholder='Type your message...')
+        button(type='submit') Send
+    footer
+      p Copyright © 2023 Chat Application

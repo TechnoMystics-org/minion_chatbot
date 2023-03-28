@@ -1,0 +1,27 @@
+/*main > .container {
+    padding: 60px 15px 0;
+}*/
+
+/*.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}*/
+
+main {
+    padding: 60px 15px 0;
+}
+.container {
+    width: 100%;
+    padding: 0 15px;
+}
+.chat_window {
+    height: 600px;
+    width: 100%;
+}
+
+.card {
+    margin-top: 15px;
+    width: 100%;
+}
