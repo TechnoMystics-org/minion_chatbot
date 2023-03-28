@@ -18,4 +18,4 @@ Save as `.env`
 Browse to `localhost:5000`
 
 
-[screenshot](https://github.com/TechnoMystics-org/minion_chatbot/raw/main/docs/images/Screenshotfrom2023-03-28%2000-16-19.png)
+![screenshot](https://github.com/TechnoMystics-org/minion_chatbot/raw/main/docs/images/Screenshotfrom2023-03-28%2000-16-19.png)
