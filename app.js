@@ -1,6 +1,7 @@
 
 // Dependencies and configuration 
 const express = require('express');
+const https = require('https');
 const pug = require('pug');
 const path = require('path');
 const { dirname } = require('path');
@@ -23,6 +24,18 @@ const oneDay = 1000 * 60 * 60 * 24;
 const cookieParser = require('cookie-parser');
 const sessions = require('express-session');
 
+// OAuth2.0 //
+const ClientOauth2 = require('client-oauth2');
+var mastodonAuth = new ClientOauth2({
+	clientId: process.env.MASTODON_CLIENT_ID,
+	clientSecret: process.env.MASTODON_CLIENT_SECRET,
+	accessTokenUri: 'https://enlightened.army/oauth/token',
+	authorizationUri: 'https://enlightened.army/oauth/authorize',
+	redirectUri: 'https://minion.technomystics.org/login/callback',
+	scopes: ['read']
+});
+const crypto = require('crypto');
+
 ////// RUN COMPLETIONS OPENAI API //////////
 async function runCompletion (message) {
   
@@ -38,6 +51,7 @@ async function runCompletion (message) {
 	}
 	catch(e){
 	  console.log("Error: "+e);
+	  return "Sorry, I experienced an error: "+e;
 	}
   
 	//console.log("Completion: "+completion.data.choices[0].message.content);
@@ -59,11 +73,119 @@ app.use(sessions({
 	resave: false
 }));
 app.use(cookieParser());
+var session;
+
+// Start login
+app.get('/login', (req, res) => {
+	session = req.session;
+
+	let nonce = crypto.randomBytes(32).toString('hex');
+	let hashed_nonce = crypto.createHash('sha256').update(nonce).digest('hex');
+	session.nonce = nonce;
+	
+	mastodonAuth.nonce = hashed_nonce;
+	console.log("Session nonce: "+session.nonce);
+	console.log("Send hashed_nonce: "+mastodonAuth.nonce);
+	let uri = mastodonAuth.code.getUri();
+
+	// Send to Mastodon for Auth
+	res.redirect(uri);
+});
+
+// login callback
+app.get('/login/callback', (req, res) => {
+	session = req.session;
+
+	mastodonAuth.code.getToken(req.originalUrl).then(function (user) {
+		console.log("Returned nonce: "+user.client.nonce);
+
+		let nonce = session.nonce;
+		let hashed_nonce = crypto.createHash('sha256').update(nonce).digest('hex');
+		if(hashed_nonce == user.client.nonce){
+			console.log("Session Secured");
+			
+			// Test the token returned for validity
+			let user_token = user.data.access_token;
+			//console.log(user);
+			console.log("Access Token: "+ user_token);
+			session.access_token = user_token;
+			
+			let auth_str = "Bearer "+user_token;
+			var https_options = {
+				hostname: 'enlightened.army',
+				port: 443,
+				path: '/api/v1/accounts/verify_credentials',
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': auth_str,
+				}
+			};
+			var test_req = https.request(https_options, (response) => {
+				console.log('statusCode: ', res.statusCode);
+				//console.log('headers: ', res.headers);
+				if(response.statusCode == 200){
+					let res_data = '';
+					response.on('data', (d) => {
+						console.log("Verified:");
+						res_data += d;
+					});
+					response.on('end', () => {
+						let resJson = JSON.parse(res_data);
+						//console.log(JSON.parse(res_data));
+						session.userid = resJson.id;
+						session.username = resJson.username;
+						session.avatar = resJson.avatar;
+						session.loggedIn = true;
+						console.log("User ID: "+session.userid);
+						console.log("Username: "+session.username);
+						res.redirect("/");
+
+					});
+				}
+			});
+			test_req.on('error', (e) =>{
+				console.log("Error: "+e);
+			});
+			test_req.end();
+
+			// Once everything looks good
+			/*
+			if(session.loggedIn){
+				console.log("Redirecting to /");
+				res.redirect("/");
+			}
+			*/
+		}
+		else{
+			console.log("Insecure Session");
+		}
+
+	});
+});
+
+// Logout
+app.get("/logout",(req, res) =>{
+	req.session.destroy();
+	res.redirect("/");
+});
 
 
 // Get hompage
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname,'views/index.html'));
+	
+	//res.sendFile(path.join(__dirname,'views/index.html'));
+	session = req.session;
+
+	if(session.loggedIn){
+		console.log("User is logged in, sending html");
+		res.sendFile(path.join(__dirname,'views/index.html'));
+	}
+	else{
+		console.log("User is not logged in, sending to /login");
+		res.redirect("/login");
+	}
+	
 });
 
 // Get custom CSS
@@ -77,6 +199,7 @@ app.get('/app_js/custom.js', (req, res) => {
 
 // handle message POST
 app.post("/", (req, res) =>{
+	
 	var response = {"message": ""};
 	// if input isn't blank
 
