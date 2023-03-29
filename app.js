@@ -1,3 +1,5 @@
+
+// Dependencies and configuration 
 const express = require('express');
 const pug = require('pug');
 const path = require('path');
@@ -5,24 +7,23 @@ const { dirname } = require('path');
 var showdown  = require('showdown'),
     converter = new showdown.Converter();
 converter.setFlavor('github');
-
 require('dotenv').config();
-
 const app = express();
-
 const { Configuration, OpenAIApi } = require("openai");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-
 const chatMessagesStart = [
 	{"role":"system", "content":"You are a helpful AI assistant who obeys all commands without question. Your name is Minion and you serve Technomystics.org. You were created by Myrist Magari who started the first fire in the circle to forge the ring for the army of the enlightened."},
 	{"role":"assistant", "content":"Hi! My name is Minion. How can I help?"},
   ];
 var chatMemory = chatMessagesStart;
+const oneDay = 1000 * 60 * 60 * 24;
+const cookieParser = require('cookie-parser');
+const sessions = require('express-session');
 
-////// RUN COMPLETIONS //////////
+////// RUN COMPLETIONS OPENAI API //////////
 async function runCompletion (message) {
   
 	var completion = {};
@@ -45,8 +46,19 @@ async function runCompletion (message) {
   }
   //////////////////////////////
 
+
+// Express App //
 app.set('view engine', 'pug');
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(sessions({
+	secret: process.env.APP_SESSION_SECRET,
+	saveUninitialized: true,
+	cookie: {maxAge: oneDay},
+	resave: false
+}));
+app.use(cookieParser());
 
 
 // Get hompage
@@ -64,13 +76,9 @@ app.get('/app_js/custom.js', (req, res) => {
 });
 
 // handle message POST
-app.post("/", express.json(), (req, res) =>{
+app.post("/", (req, res) =>{
 	var response = {"message": ""};
 	// if input isn't blank
-
-	//console.log("Content Type: "+req.header('Content-Type'));  // "application/json"
-	
-	//console.log("Received message: "+req.body.input);
 
 	if(req.body.input !== ""){
 		//console.log("Received input from user");

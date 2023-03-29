@@ -9,8 +9,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "openai": "^3.2.1",
     "path": "^0.12.7",
     "pug": "^3.0.2",
