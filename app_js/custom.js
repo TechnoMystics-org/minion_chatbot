@@ -1,11 +1,10 @@
-
-
-
+// This keeps the conversation updated on the screen. Sticky to the bottom.
 function chatScrollToBottom(){
     let chatWindow = $(".chat_window");
     chatWindow.scrollTop(chatWindow[0].scrollHeight);
 }
 
+// Handle loading spinner
 function displaySpinner(){
     let spinner = document.getElementById("spinner");
     spinner.style.visibility = 'visible';
@@ -15,16 +14,15 @@ function hideSpinner(){
     spinner.style.visibility = 'hidden';
 }
 
+// process message submition response
 function processResponse(data){
-    //console.log("Response: ");
-    //console.log(data);
     let chatWindow = $(".chat_window");
     if (data.message !== ""){
         chatWindow.append('\
         <div class="card text-bg-secondary mb-3">\
             <div class="card-header">Minion</div>\
             <div class="card-body">\
-                <p class="">' + data.message + '</p>\
+                <p><small>' + data.message + '</small></p>\
             </div>\
         </div>');
         // Scroll chat window to bottom
@@ -33,40 +31,42 @@ function processResponse(data){
     }
 }
 
+// Update chatbox with new message
 function appendUserMessage(){
     // get user input
     let userInput = document.getElementById("user_input").value;
     // id chat window
     let chatWindow = $(".chat_window");
-    // log user input to console
-    //console.log("text input: "+userInput);
+    
     // If user input isn't blank, append message to chat window
     if(userInput !== ""){
         chatWindow.append('\
         <div class="card text-bg-dark mb-3">\
             <div class="card-header">User</div>\
             <div class="card-body">\
-                <p class="">' + userInput + '</p>\
+                <p><small>' + userInput + '</small></p>\
             </div>\
         </div>');
         // clear input
         document.getElementById("user_input").value = "";
         // Scroll chat window to bottom
         chatScrollToBottom();
+
         return userInput;
     }
 }
 
+// Send user message to AI
 function postUserMessage(message) {
-    //console.log("Attempting to POST: "+message);
     var postData = {"input": message};
-    //console.log("JSON Stringify: "+JSON.stringify(postData));
 
+    // Use ajax to submit HTTP POST
     $.ajax({
         type: "POST",
         url: "/",
         data: JSON.stringify(postData),
         success: function(data){
+            // Process AI Response
             processResponse(data);
         },
         contentType: "application/json",
@@ -81,35 +81,40 @@ function postUserMessage(message) {
         }, 
         "json");
     */
-   return Promise.resolve(true);
+   return Promise.resolve(true); // Not entirely sure this is necessary
 }
 
+// Driving function for sending user message to AI
 function sendMessage(){
     let userInput = appendUserMessage();
     postUserMessage(userInput);
-    
-    //console.log("User Input: "+userInput);
 }
 
+// Allow user to Ctrl-Enter when focused on the TextArea
 document.getElementById("user_input").addEventListener('keydown', function (e){
+    // When TextArea isn't empty
     if(document.getElementById("user_input").value !== ""){
+        // if ENTER
         if (e.keyCode == 13){
             // Ctrl + Enter
+            // if CTRL
             if(e.ctrlKey) {
-                console.log('ctrl+enter');
+                // Show loading spinner
                 displaySpinner();
+                // Send Message
                 sendMessage();
-            }
-            else{
-                //just Enter
             }
         }
     }
 });
 
+// When SEND button is clicked
 document.getElementById("send_button").addEventListener("click", ()=>{
+    // When TextArea isn't empy
     if(document.getElementById("user_input").value !== ""){
+        // Display loading spinner
         displaySpinner();
+        // Send Message
         sendMessage();
     }
 });

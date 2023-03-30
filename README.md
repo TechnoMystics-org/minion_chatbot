@@ -7,15 +7,22 @@ nodejs webapp leveraging openai's chatgpt model
 
 `cd minion_chatbot`
 
-Modify `.env.example` and add your OpenAI API Key.
+Modify `.env.example` and enter your information:
 
-Save as `.env`
+```
+OPENAI_API_KEY=""
+APP_SESSION_SECRET=""
+MASTODON_CLIENT_ID=""
+MASTODON_CLIENT_SECRET=""
+```
+
+Save modified `.env.example` as `.env`
 
 ## Run
 
 `node app.js`
 
-Browse to `localhost:5000`
+Browse to `http://localhost:5000`
 
 
-![screenshot](https://github.com/TechnoMystics-org/minion_chatbot/raw/main/docs/images/Screenshotfrom2023-03-28%2000-16-19.png)
+![screenshot](https://github.com/TechnoMystics-org/minion_chatbot/raw/main/docs/images/scrot03-29-2023.png)
