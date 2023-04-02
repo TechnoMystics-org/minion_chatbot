@@ -118,3 +118,28 @@ document.getElementById("send_button").addEventListener("click", ()=>{
         sendMessage();
     }
 });
+
+function processUser(data){
+    // display user avatar on navbar
+    $("#userinfo").append("<a href=\""+data.url+"\">"+"<img src=\""+data.avatar+"\" height=\"50px\">"+"</a>");
+}
+
+// Get user info for graphics & stuff
+function getUser(){
+    // Use ajax to submit HTTP POST
+    $.ajax({
+        type: "POST",
+        url: "/getuser",
+        success: function(data){
+            // Process AI Response
+            processUser(data);
+        },
+        contentType: "application/json",
+        dataType: "json"
+    });
+}
+
+window.addEventListener('load', function (){
+    // once the window is loaded get the user information
+    getUser();
+});
