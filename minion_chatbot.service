@@ -1,0 +1,12 @@
+[Unit]
+Description=Minon Chatbot
+
+[Service]
+Type=simple
+User=<user>
+ExecStart=<pathto>/minion_chatbot/start_app.sh
+Restart=on-failure
+TimeoutSec=3000
+
+[Install]
+WantedBy=multi-user.target
