@@ -1,6 +1,16 @@
 # minion_chatbot
 nodejs webapp leveraging openai's chatgpt model
 
+## Dependencies
+linux server with the following
+
+1. NodeJS
+2. ExpressJS
+3. Mastodon API Key
+4. Redis
+5. OpenAI API Key
+
+
 ## Setup
 
 `git clone https://github.com/technomystics-org/minion_chatbot`
@@ -14,6 +24,7 @@ OPENAI_API_KEY=""
 APP_SESSION_SECRET=""
 MASTODON_CLIENT_ID=""
 MASTODON_CLIENT_SECRET=""
+REDIS_PASSWORD=""
 ```
 
 Save modified `.env.example` as `.env`
