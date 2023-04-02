@@ -36,4 +36,4 @@ Save modified `.env.example` as `.env`
 Browse to `http://localhost:5000`
 
 
-![screenshot](https://github.com/TechnoMystics-org/minion_chatbot/raw/main/docs/images/scrot03-29-2023.png)
+![screenshot](https://github.com/TechnoMystics-org/minion_chatbot/raw/main/docs/images/scrot04-01-2023.png)
