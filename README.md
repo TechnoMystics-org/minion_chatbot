@@ -1,5 +1,5 @@
 # minion_chatbot
-nodejs webapp leveraging openai's chatgpt model
+nodejs webapp leveraging OpenAI's ChatGPT-4 model, Redis for session storage, and OAuth2 security pointed at a Mastodon server.
 
 ## Dependencies
 linux server with the following

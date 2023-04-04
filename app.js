@@ -277,6 +277,14 @@ app.get('/app_images/favicon.ico', (req,res) => {
 	res.sendFile(path.join(__dirname, 'app_images/favicon.ico'));
 });
 
+///////////////////////
+// Get github logo ////
+///////////////////////
+app.get('/app_images/github-mark.png', (req,res) => {
+	res.sendFile(path.join(__dirname, 'app_images/github-mark.png'));
+});
+
+
 /////////////////////////////////////////////
 // User submit's message to chat bot ////////
 /////////////////////////////////////////////
