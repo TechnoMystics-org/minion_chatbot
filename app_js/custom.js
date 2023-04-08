@@ -2,6 +2,8 @@
 function chatScrollToBottom(){
     let chatWindow = $(".chat_window");
     chatWindow.scrollTop(chatWindow[0].scrollHeight);
+    let scrollingElement = (document.scrollingElement || document.body);
+    scrollingElement.scrollTop = scrollingElement.scrollHeight;
 }
 
 // Handle loading spinner
