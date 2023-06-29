@@ -13,6 +13,7 @@ const session = require('express-session'); // Express (HTTP Server) session con
 const crypto = require('crypto'); // Used for generating nonce (Oauth2)
 require('dotenv').config(); // This is for using .env to store secured information
 const oneDay = 1000 * 60 * 60 * 24; // Handy variable
+const userAvatar = "";
 
 // Redis Store (storing session data)
 const redis = require('redis');

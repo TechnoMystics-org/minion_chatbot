@@ -1,3 +1,6 @@
+var userAvatar;
+var userDisplayName;
+
 // This keeps the conversation updated on the screen. Sticky to the bottom.
 function chatScrollToBottom(){
     let chatWindow = $(".chat_window");
@@ -22,7 +25,7 @@ function processResponse(data){
     if (data.message !== ""){
         chatWindow.append('\
         <div class="card text-bg-secondary mb-3">\
-            <div class="card-header">Minion</div>\
+            <div class="card-header"><img src="https://cdn.masto.host/enlightenedarmy/accounts/avatars/109/248/806/804/973/912/original/b3df26eb992e1f57.png" height="35px"> Minion</div>\
             <div class="card-body">\
                 <p><small>' + data.message + '</small></p>\
             </div>\
@@ -32,6 +35,7 @@ function processResponse(data){
         chatScrollToBottom();
     }
 }
+
 
 // Update chatbox with new message
 function appendUserMessage(){
@@ -44,7 +48,7 @@ function appendUserMessage(){
     if(userInput !== ""){
         chatWindow.append('\
         <div class="card text-bg-dark mb-3">\
-            <div class="card-header">User</div>\
+            <div class="card-header"> <img src="'+userAvatar+'" height="35px"> '+userDisplayName+'</div>\
             <div class="card-body">\
                 <p><small>' + userInput + '</small></p>\
             </div>\
@@ -124,6 +128,8 @@ document.getElementById("send_button").addEventListener("click", ()=>{
 function processUser(data){
     // display user avatar on navbar
     $("#userinfo").append("<a href=\""+data.url+"\">"+"<img src=\""+data.avatar+"\" height=\"50px\">"+"</a>");
+    userAvatar = data.avatar;
+    userDisplayName = data.username;
 }
 
 // Get user info for graphics & stuff
